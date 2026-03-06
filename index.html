@@ -5,29 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suivi des Heures - Assistante</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; padding: 20px; max-width: 900px; margin: 0 auto; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; padding: 15px; max-width: 900px; margin: 0 auto; }
         h1 { text-align: center; color: #2c3e50; }
+        
+        /* Dashboard */
         .dashboard { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 1; text-align: center; }
         .card h3 { margin: 0 0 10px 0; font-size: 16px; color: #7f8c8d; }
         .card .value { font-size: 24px; font-weight: bold; }
         .solde-positif { color: #27ae60; } 
         .solde-negatif { color: #c0392b; } 
+        
+        /* Formulaire */
         .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
         .input-group { display: flex; flex-direction: column; flex: 1; min-width: 140px; }
         .input-group.large { flex: 2; min-width: 200px; }
-        label { font-size: 14px; margin-bottom: 5px; color: #34495e; }
-        input { padding: 8px; border: 1px solid #bdc3c7; border-radius: 4px; }
-        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        label { font-size: 14px; margin-bottom: 5px; color: #34495e; font-weight: 500; }
+        input { padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; font-size: 14px; }
+        
+        /* Boutons */
+        button { background-color: #3498db; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.3s; font-size: 14px;}
         button:hover { background-color: #2980b9; }
         .btn-export { background-color: #27ae60; margin-left: 10px; }
         .btn-export:hover { background-color: #2ecc71; }
-        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ecf0f1; }
-        th { background-color: #2c3e50; color: white; }
-        .delete-btn { background-color: #e74c3c; padding: 5px 10px; font-size: 12px; }
-        .delete-btn:hover { background-color: #c0392b; }
         .actions-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        
+        /* Tableau */
+        .table-wrapper { width: 100%; overflow-x: auto; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; } /* min-width force le scroll sur mobile au lieu d'écraser le texte */
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background-color: #2c3e50; color: white; white-space: nowrap; }
+        .delete-btn { background-color: #e74c3c; padding: 6px 10px; font-size: 12px; }
+        .delete-btn:hover { background-color: #c0392b; }
+
+        /* --- ADAPTATION MOBILE (RESPONSIVE) --- */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .dashboard { flex-direction: column; gap: 10px; }
+            .form-container { flex-direction: column; align-items: stretch; gap: 15px; }
+            .input-group, .input-group.large { min-width: 100%; }
+            .form-container button { width: 100%; margin-top: 5px; }
+            .actions-header { flex-direction: column; align-items: stretch; gap: 10px; }
+            .actions-header h2 { margin: 0; text-align: center; }
+            .btn-export { margin-left: 0; width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -64,8 +85,8 @@
             <input type="number" id="reel" step="0.25" placeholder="Ex: 8">
         </div>
         <div class="input-group large">
-            <label for="commentaire">Commentaire (Optionnel)</label>
-            <input type="text" id="commentaire" placeholder="Ex: Réunion tardive, RDV médical...">
+            <label for="commentaire">Commentaire</label>
+            <input type="text" id="commentaire" placeholder="Ex: Réunion tardive...">
         </div>
         <button onclick="ajouterEntree()">Ajouter</button>
     </div>
@@ -75,20 +96,22 @@
         <button class="btn-export" onclick="exporterCSV()">💾 Exporter vers Excel</button>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Théorique</th>
-                <th>Réel</th>
-                <th>Écart</th>
-                <th>Commentaire</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            </tbody>
-    </table>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Théorique</th>
+                    <th>Réel</th>
+                    <th>Écart</th>
+                    <th>Commentaire</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                </tbody>
+        </table>
+    </div>
 
     <script>
         let entrees = JSON.parse(localStorage.getItem('heuresAssistante')) || [];
@@ -100,7 +123,6 @@
             let totalTheo = 0;
             let totalReel = 0;
 
-            // Trier les entrées par date (de la plus récente à la plus ancienne)
             entrees.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             entrees.forEach((entree, index) => {
@@ -171,19 +193,16 @@
         }
 
         function exporterCSV() {
-            // Création de l'en-tête pour Excel (format compatible français avec point-virgule)
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // Le \uFEFF aide Excel à lire les accents
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "Date;Heures Theoriques;Heures Reelles;Ecart;Commentaire\n";
             
             entrees.forEach(function(e) {
                 let ecart = e.reel - e.theo;
-                // On remplace les éventuels points-virgules dans les commentaires pour ne pas casser le fichier
                 let comPropre = e.commentaire ? e.commentaire.replace(/;/g, ',') : "";
                 let row = `${e.date};${e.theo};${e.reel};${ecart};"${comPropre}"`;
                 csvContent += row + "\n";
             });
 
-            // Création du lien de téléchargement
             var encodedUri = encodeURI(csvContent);
             var link = document.createElement("a");
             link.setAttribute("href", encodedUri);
